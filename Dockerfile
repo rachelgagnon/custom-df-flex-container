@@ -37,6 +37,7 @@ RUN python -m venv /venv \
 
 # Set python environment variables
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE=$TEMPLATE_FILE
+ENV LD_LIBRARY_PATH="${WORKDIR}/lib/oracle_client/"
 
 # Copy licenses and launcher from base image
 COPY --from=python-base /usr/licenses/ /usr/licenses/
