@@ -1,1 +1,3 @@
 google-cloud-secret-manager
+apache-beam[gcp]==2.59.0
+oracledb
