@@ -65,7 +65,7 @@ def run(argv=None, save_main_session=True):
     pipeline_options.view_as(
         SetupOptions).save_main_session = save_main_session
 
-    oracledb.init_oracle_client()
+    # oracledb.init_oracle_client()
 
     class LogResults(beam.DoFn):
         """Just log the results"""

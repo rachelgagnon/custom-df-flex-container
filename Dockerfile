@@ -25,22 +25,21 @@ WORKDIR $WORKDIR
 # Create requirements.txt file if not provided
 RUN if ! [ -f requirements.txt ] ; then echo "$BEAM_PACKAGE" > requirements.txt ; fi
 
-# RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list 
-
 # Install CLI tools
 RUN apt-get update \
-    && apt-get install -y gsutil
+    && apt-get install -y wget \
+    && apt-get install unzip
 
-RUN gsutil cp $GCS_PATH/instantclient-basic-linuxx64.zip $LD_LIBRARY_PATH/
+RUN wget -p $LD_LIBRARY_PATH/ https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-basic-linux.x64-23.5.0.24.07.zip
+# # Download Oracle Client Library from GCS
+# RUN gsutil cp $GCS_PATH/instantclient-basic-linuxx64.zip $LD_LIBRARY_PATH/
 
+# Unzip Oracle Client
 RUN unzip $LD_LIBRARY_PATH/instantclient-basic-linuxx64.zip
 
-# download oracle client file from gcs
-# unzip
-# place in LD_LIBRARY_PATH location
 # install libaio
 
-# Install dependencies to launch the pipeline and download to reduce worker startup time
+# Install dependencies to launch the pipeline and download to reduce worker startup time 
 RUN python -m venv /venv \
     && /venv/bin/pip install --no-cache-dir --upgrade pip setuptools \
     && /venv/bin/pip install --no-cache-dir -U -r $REQUIREMENTS_FILE \
