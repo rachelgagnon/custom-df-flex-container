@@ -15,6 +15,7 @@ ARG REQUIREMENTS_FILE=requirements.txt
 ARG BEAM_PACKAGE=apache-beam[gcp,dataframe,azure,aws]==$BEAM_VERSION
 ARG PY_VERSION=3.11
 ARG GCS_PATH="gs://dataflow-staging-us-central1-54176095559/dataflow_oracle/oracle_client"
+ARG ORACLE_URL="https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-basic-linux.x64-23.5.0.24.07.zip"
 ARG LD_LIBRARY_PATH=$WORKDIR/lib/oracle_client
 
 # Copy template files to /template
@@ -30,14 +31,14 @@ RUN apt-get update \
     && apt-get install -y wget \
     && apt-get install unzip
 
-RUN wget -p $LD_LIBRARY_PATH/ https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-basic-linux.x64-23.5.0.24.07.zip
-# # Download Oracle Client Library from GCS
-# RUN gsutil cp $GCS_PATH/instantclient-basic-linuxx64.zip $LD_LIBRARY_PATH/
+# Download Oracle Client
+RUN wget -P $LD_LIBRARY_PATH/ $ORACLE_URL
 
 # Unzip Oracle Client
-RUN unzip $LD_LIBRARY_PATH/instantclient-basic-linuxx64.zip
+RUN unzip $LD_LIBRARY_PATH/instantclient-basic-linux.x64-23.5.0.24.07.zip
 
-# install libaio
+# # install libaio
+# RUN apt-get install libaio1
 
 # Install dependencies to launch the pipeline and download to reduce worker startup time 
 RUN python -m venv /venv \

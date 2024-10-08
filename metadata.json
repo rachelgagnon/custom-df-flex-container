@@ -1,0 +1,34 @@
+{
+    "description": "Word Count using Dataflow Flex Template",
+    "name": "Word Count",
+    "parameters": [
+        {
+            "helpText": "GCS file pattern to read from (e.g., gs://your-bucket/input/*.txt)",
+            "isOptional": false,
+            "label": "Input File Pattern",
+            "name": "input",
+            "paramType": "TEXT"
+        },
+        {
+            "helpText": "GCS file to write output to (e.g., gs://your-bucket/output/word_counts.txt)",
+            "isOptional": false,
+            "label": "Output File",
+            "name": "output",
+            "paramType": "TEXT"
+        },
+        {
+            "helpText": "SDK Harness Log",
+            "isOptional": true,
+            "label": "SDK Harness Log Level",
+            "name": "defaultSdkHarnessLogLevel",
+            "paramType": "TEXT"
+        },
+        {
+            "helpText": "Worker Log",
+            "isOptional": true,
+            "label": "Worker Log Level",
+            "name": "defaultWorkerLogLevel",
+            "paramType": "TEXT"
+        }
+    ]
+}
