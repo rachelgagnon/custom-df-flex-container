@@ -29,7 +29,7 @@ RUN if ! [ -f requirements.txt ] ; then echo "$BEAM_PACKAGE" > requirements.txt 
 RUN apt-get update \
     && apt-get install -y wget unzip libaio1 \
     && apt-get install -y libffi-dev git \
-    && rm -rf var/lib/apt/lists/* \
+    && rm -rf var/lib/apt/lists/*
 
 # Install dependencies to launch the pipeline and download to reduce worker startup time 
 RUN python -m venv /venv \
