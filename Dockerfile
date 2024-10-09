@@ -6,7 +6,7 @@ FROM gcr.io/dataflow-templates-base/python311-template-launcher-base:latest as p
 #============================================================#
 # Create template image using Google distroless Python image #
 #============================================================#
-FROM gcr.io/distroless/python3:f369a5c1313c9919954ea37b847ccf6b40d3d509
+FROM python:3.11-slim
 
 ARG BEAM_VERSION=2.59.0
 ARG TEMPLATE_FILE=main.py
