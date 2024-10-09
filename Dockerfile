@@ -17,6 +17,9 @@ ARG PY_VERSION=3.11
 ARG ORACLE_URL="https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-basic-linux.x64-23.5.0.24.07.zip"
 ARG LD_LIBRARY_PATH=/opt/oracle
 
+ENV FLEX_TEMPLATE_PYTHON_PY_FILE=$TEMPLATE_FILE
+ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=$REQUIREMENTS_FILE
+
 # Copy template files to /template
 RUN mkdir -p $WORKDIR
 COPY main.py requirements.txt* /template/
@@ -26,19 +29,27 @@ WORKDIR $WORKDIR
 RUN if ! [ -f requirements.txt ] ; then echo "$BEAM_PACKAGE" > requirements.txt ; fi
 
 # Install CLI tools
+# RUN apt-get update \
+#     && apt-get install -y wget unzip libaio1 \
+#     && apt-get install -y libffi-dev git \
+#     && rm -rf var/lib/apt/lists/*
+
+# # Install dependencies to launch the pipeline and download to reduce worker startup time 
+# RUN python -m venv /venv \
+#     && /venv/bin/pip install --no-cache-dir --upgrade pip setuptools \
+#     && /venv/bin/pip install --no-cache-dir -U -r $REQUIREMENTS_FILE \
+#     && /venv/bin/pip download --no-cache-dir --dest /tmp/dataflow-requirements-cache -r $REQUIREMENTS_FILE
+#     # && /venv/bin/pip uninstall js2py -y
+#     # && rm -rf /usr/local/lib/python$PY_VERSION/site-packages  \
+#     # && mv /venv/lib/python$PY_VERSION/site-packages /usr/local/lib/python$PY_VERSION/
+
 RUN apt-get update \
     && apt-get install -y wget unzip libaio1 \
     && apt-get install -y libffi-dev git \
-    && rm -rf var/lib/apt/lists/*
-
-# Install dependencies to launch the pipeline and download to reduce worker startup time 
-RUN python -m venv /venv \
-    && /venv/bin/pip install --no-cache-dir --upgrade pip setuptools \
-    && /venv/bin/pip install --no-cache-dir -U -r $REQUIREMENTS_FILE \
-    && /venv/bin/pip download --no-cache-dir --dest /tmp/dataflow-requirements-cache -r $REQUIREMENTS_FILE
-    # && /venv/bin/pip uninstall js2py -y
-    # && rm -rf /usr/local/lib/python$PY_VERSION/site-packages  \
-    # && mv /venv/lib/python$PY_VERSION/site-packages /usr/local/lib/python$PY_VERSION/
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r $FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE \
+    && pip download --no-cache-dir --dest /tmp/dataflow-requirements-cache -r $FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE 
 
 # Download Oracle Client
 RUN wget $ORACLE_URL
@@ -52,8 +63,6 @@ RUN sh -c "echo /opt/oracle/instantclient_23_5 > /etc/ld.so.conf.d/oracle-instan
 
 # Set python environment variables
 ENV PIP_NO_DEPS=True
-ENV FLEX_TEMPLATE_PYTHON_PY_FILE=$TEMPLATE_FILE
-ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=$REQUIREMENTS_FILE
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH/instantclient_23_5
 
 # Copy licenses and launcher from base image
