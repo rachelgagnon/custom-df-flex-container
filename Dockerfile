@@ -14,9 +14,8 @@ ARG WORKDIR=/template
 ARG REQUIREMENTS_FILE=requirements.txt
 ARG BEAM_PACKAGE=apache-beam[gcp,dataframe,azure,aws]==$BEAM_VERSION
 ARG PY_VERSION=3.11
-ARG GCS_PATH="gs://dataflow-staging-us-central1-54176095559/dataflow_oracle/oracle_client"
 ARG ORACLE_URL="https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-basic-linux.x64-23.5.0.24.07.zip"
-ARG LD_LIBRARY_PATH=$WORKDIR/lib/oracle_client
+ARG LD_LIBRARY_PATH=/opt/oracle
 
 # Copy template files to /template
 RUN mkdir -p $WORKDIR
@@ -28,30 +27,34 @@ RUN if ! [ -f requirements.txt ] ; then echo "$BEAM_PACKAGE" > requirements.txt 
 
 # Install CLI tools
 RUN apt-get update \
-    && apt-get install -y wget \
-    && apt-get install unzip
-
-# Download Oracle Client
-RUN wget -P $LD_LIBRARY_PATH/ $ORACLE_URL
-
-# Unzip Oracle Client
-RUN unzip $LD_LIBRARY_PATH/instantclient-basic-linux.x64-23.5.0.24.07.zip
-
-# # install libaio
-# RUN apt-get install libaio1
+    && apt-get install -y wget unzip libaio1 \
+    && apt-get install -y libffi-dev git \
+    && rm -rf var/lib/apt/lists/* \
 
 # Install dependencies to launch the pipeline and download to reduce worker startup time 
 RUN python -m venv /venv \
     && /venv/bin/pip install --no-cache-dir --upgrade pip setuptools \
     && /venv/bin/pip install --no-cache-dir -U -r $REQUIREMENTS_FILE \
     && /venv/bin/pip download --no-cache-dir --dest /tmp/dataflow-requirements-cache -r $REQUIREMENTS_FILE \
-    && /venv/bin/pip uninstall js2py -y \
-    && rm -rf /usr/local/lib/python$PY_VERSION/site-packages  \
-    && mv /venv/lib/python$PY_VERSION/site-packages /usr/local/lib/python$PY_VERSION/
+    && /venv/bin/pip uninstall js2py -y
+    # && rm -rf /usr/local/lib/python$PY_VERSION/site-packages  \
+    # && mv /venv/lib/python$PY_VERSION/site-packages /usr/local/lib/python$PY_VERSION/
+
+# Download Oracle Client
+RUN wget $ORACLE_URL
+
+# Unzip Oracle Client
+RUN unzip instantclient-basic-linux.x64-23.5.0.24.07.zip -d /opt/oracle
+
+# Add Instant Client to the runtime link path
+RUN sh -c "echo /opt/oracle/instantclient_23_5 > /etc/ld.so.conf.d/oracle-instantclient.conf" \
+    && ldconfig
 
 # Set python environment variables
+ENV PIP_NO_DEPS=True
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE=$TEMPLATE_FILE
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=$REQUIREMENTS_FILE
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH/instantclient_23_5
 
 # Copy licenses and launcher from base image
 COPY --from=python-base /usr/licenses/ /usr/licenses/
