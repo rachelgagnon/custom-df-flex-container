@@ -6,7 +6,7 @@ FROM gcr.io/dataflow-templates-base/python311-template-launcher-base:latest as p
 #============================================================#
 # Create template image using Google distroless Python image #
 #============================================================#
-FROM python:3.11-slim
+FROM gcr.io/distroless/python3:f369a5c1313c9919954ea37b847ccf6b40d3d509
 
 ARG BEAM_VERSION=2.59.0
 ARG TEMPLATE_FILE=main.py
@@ -28,27 +28,14 @@ WORKDIR $WORKDIR
 # Create requirements.txt file if not provided
 RUN if ! [ -f requirements.txt ] ; then echo "$BEAM_PACKAGE" > requirements.txt ; fi
 
-# Install CLI tools
-# RUN apt-get update \
-#     && apt-get install -y wget unzip libaio1 \
-#     && apt-get install -y libffi-dev git \
-#     && rm -rf var/lib/apt/lists/*
-
 # # Install dependencies to launch the pipeline and download to reduce worker startup time 
-# RUN python -m venv /venv \
-#     && /venv/bin/pip install --no-cache-dir --upgrade pip setuptools \
-#     && /venv/bin/pip install --no-cache-dir -U -r $REQUIREMENTS_FILE \
-#     && /venv/bin/pip download --no-cache-dir --dest /tmp/dataflow-requirements-cache -r $REQUIREMENTS_FILE
-#     # && /venv/bin/pip uninstall js2py -y
-#     # && rm -rf /usr/local/lib/python$PY_VERSION/site-packages  \
-#     # && mv /venv/lib/python$PY_VERSION/site-packages /usr/local/lib/python$PY_VERSION/
-
 RUN apt-get update \
     && apt-get install -y wget unzip libaio1 \
     && apt-get install -y libffi-dev git \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r $FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE \
+    && pip uninstall js2py -y \
     && pip download --no-cache-dir --dest /tmp/dataflow-requirements-cache -r $FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE 
 
 # Download Oracle Client
@@ -61,7 +48,7 @@ RUN unzip instantclient-basic-linux.x64-23.5.0.24.07.zip -d /opt/oracle
 RUN sh -c "echo /opt/oracle/instantclient_23_5 > /etc/ld.so.conf.d/oracle-instantclient.conf" \
     && ldconfig
 
-# Set python environment variables
+# Set Python environment variables
 ENV PIP_NO_DEPS=True
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH/instantclient_23_5
 

@@ -75,10 +75,10 @@ def run(argv=None, save_main_session=True):
     # The pipeline will be run on exiting the with block.
     with beam.Pipeline(options=pipeline_options) as p:
         oracledb.init_oracle_client()
-        
+
         (
             p | 'Create' >> beam.Create(
-                [os.listdir('/template/lib/oracle_client/')])
+                [os.listdir('/opt/oracle/instantclient_23_5')])
               | beam.ParDo(LogResults())
         )
 
