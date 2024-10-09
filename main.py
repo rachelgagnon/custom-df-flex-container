@@ -65,8 +65,6 @@ def run(argv=None, save_main_session=True):
     pipeline_options.view_as(
         SetupOptions).save_main_session = save_main_session
 
-    # oracledb.init_oracle_client()
-
     class LogResults(beam.DoFn):
         """Just log the results"""
 
@@ -76,6 +74,8 @@ def run(argv=None, save_main_session=True):
 
     # The pipeline will be run on exiting the with block.
     with beam.Pipeline(options=pipeline_options) as p:
+        oracledb.init_oracle_client()
+        
         (
             p | 'Create' >> beam.Create(
                 [os.listdir('/template/lib/oracle_client/')])

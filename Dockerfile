@@ -35,8 +35,8 @@ RUN apt-get update \
 RUN python -m venv /venv \
     && /venv/bin/pip install --no-cache-dir --upgrade pip setuptools \
     && /venv/bin/pip install --no-cache-dir -U -r $REQUIREMENTS_FILE \
-    && /venv/bin/pip download --no-cache-dir --dest /tmp/dataflow-requirements-cache -r $REQUIREMENTS_FILE \
-    && /venv/bin/pip uninstall js2py -y
+    && /venv/bin/pip download --no-cache-dir --dest /tmp/dataflow-requirements-cache -r $REQUIREMENTS_FILE
+    # && /venv/bin/pip uninstall js2py -y
     # && rm -rf /usr/local/lib/python$PY_VERSION/site-packages  \
     # && mv /venv/lib/python$PY_VERSION/site-packages /usr/local/lib/python$PY_VERSION/
 
