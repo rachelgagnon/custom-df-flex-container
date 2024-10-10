@@ -1,4 +1,4 @@
-# Custom Dataflow Flex Temlate Image
+# Custom Dataflow Flex Template Image
 This repo demonstrates how to use custom container images to build and deploy Dataflow flex templates. We use two different custom images, the template launcher image and the execution image. Each custom container is a Dockerfile that is built and pushed to Artifact Registry using Cloud Build.
 
 ### Template Launcher Image: 
