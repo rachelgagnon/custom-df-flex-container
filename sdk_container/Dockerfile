@@ -1,4 +1,4 @@
-FROM python:3.11-bookworm
+FROM python:3.11-slim
 
 # Install SDK.
 RUN pip install --no-cache-dir apache-beam[gcp]==2.59.0
