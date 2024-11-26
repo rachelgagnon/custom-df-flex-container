@@ -1,34 +1,14 @@
 {
-    "description": "Word Count using Dataflow Flex Template",
-    "name": "Word Count",
-    "parameters": [
-        {
-            "helpText": "GCS file pattern to read from (e.g., gs://your-bucket/input/*.txt)",
-            "isOptional": false,
-            "label": "Input File Pattern",
-            "name": "input",
-            "paramType": "TEXT"
-        },
-        {
-            "helpText": "GCS file to write output to (e.g., gs://your-bucket/output/word_counts.txt)",
-            "isOptional": false,
-            "label": "Output File",
-            "name": "output",
-            "paramType": "TEXT"
-        },
-        {
-            "helpText": "SDK Harness Log",
-            "isOptional": true,
-            "label": "SDK Harness Log Level",
-            "name": "defaultSdkHarnessLogLevel",
-            "paramType": "TEXT"
-        },
-        {
-            "helpText": "Worker Log",
-            "isOptional": true,
-            "label": "Worker Log Level",
-            "name": "defaultWorkerLogLevel",
-            "paramType": "TEXT"
-        }
-    ]
+  "name": "Getting started Python flex template",
+  "description": "An example flex template for Python.",
+  "parameters": [
+    {
+      "name": "output",
+      "label": "Output destination",
+      "helpText": "The path and filename prefix for writing output files. Example: gs://your-bucket/your-path",
+      "regexes": [
+        "^gs:\\/\\/[^\\n\\r]+$"
+      ]
+    }
+  ]
 }
