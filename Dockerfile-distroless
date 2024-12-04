@@ -41,6 +41,11 @@ COPY --from=base /usr/lib/python* /usr/lib/.
 # Contains additionally required files.
 COPY --from=base /opt /opt
 
+# We have to reset the environment variables because we are using a new FROM image URL (I think?).
 ENV PATH "$PATH:/usr/local/bin"
+ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE="/template/requirements.txt"
+ENV FLEX_TEMPLATE_PYTHON_PY_FILE="/template/main.py"
+ENV LD_LIBRARY_PATH /opt/oracle/instantclient_23_5
 
+# We have to reset the entrypoint due to using a new FROM image URL.
 ENTRYPOINT ["/opt/google/dataflow/python_template_launcher"]
