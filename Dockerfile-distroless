@@ -11,9 +11,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 #
-# Build as
-# TODO(damondouglas): consider different directory with single Dockerfile or cloudbuild.yaml so that the command below uses gcloud builds.
-# docker buildx build -t <image URL> -f Dockerfile-distroless --build_arg=BASE=<template launcher image URL> .
 ARG BASE
 FROM ${BASE} AS base
 ENV LANG=C.UTF8
@@ -36,12 +33,12 @@ COPY --from=base /usr/local/bin /usr/local/bin
 COPY --from=base /usr/local/lib /usr/local/lib
 
 # Python standard library modules.
-COPY --from=base /usr/lib/python* /usr/lib/.
+COPY --from=base /usr/lib/python* /usr/lib/
 
 # Contains additionally required files.
 COPY --from=base /opt /opt
 
-# We have to reset the environment variables because we are using a new FROM image URL (I think?).
+# We have to reset the environment variables because we are using a new FROM image URL.
 ENV PATH "$PATH:/usr/local/bin"
 ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE="/template/requirements.txt"
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="/template/main.py"
