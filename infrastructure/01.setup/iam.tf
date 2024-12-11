@@ -7,10 +7,14 @@ resource "google_service_account" "dataflow_worker" {
 }
 
 // Provision IAM roles for the Dataflow runner service account
-resource "google_project_iam_member" "dataflow_worker_service_account_roles" {
-  depends_on = [google_project_service.required_services]
+resource "google_project_iam_member" "dataflow_worker" {
   for_each = toset([
     "roles/dataflow.worker",
+    "roles/logging.logWriter",
+    "roles/monitoring.metricWriter",
+    "roles/monitoring.viewer",
+    "roles/stackdriver.resourceMetadata.writer",
+    "roles/autoscaling.metricsWriter",
   ])
   role    = each.key
   member  = "serviceAccount:${google_service_account.dataflow_worker.email}"

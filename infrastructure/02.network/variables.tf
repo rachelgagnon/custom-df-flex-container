@@ -21,5 +21,4 @@ variable "network_name_base" {
 variable "subnetwork_cidr_range" {
   type        = string
   description = "The address range for this subnet, in CIDR notation. Use a standard private VPC network address range: for example, 10.0.0.0/9."
-  default     = "10.128.0.0/20"
 }
