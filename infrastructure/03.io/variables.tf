@@ -3,6 +3,11 @@ variable "bigquery_dataset_id" {
   description = "The BigQuery dataset ID into which we load data"
 }
 
+variable "bigquery_table_id" {
+  type        = string
+  description = "The BigQuery table ID into which we load data"
+}
+
 variable "dataflow_worker_service_account_id" {
   type        = string
   description = "The Dataflow Worker Service Account ID"
