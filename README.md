@@ -1,0 +1,1 @@
+This repo demonstrates the creation and deployment of Dataflow Flex Templates with custom images in two different flavors of Linux: Debian and Ubuntu. Debian is used by default for Dataflow and Apache base images, and using Ubuntu requires modification to the Dockerfile.
